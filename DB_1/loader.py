@@ -1,7 +1,7 @@
 import csv
 import time
 
-from db import db_session
+from db_2.db import db_session
 from model_2 import Salary
 
 def read_csv(filename):

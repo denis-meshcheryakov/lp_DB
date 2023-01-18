@@ -1,7 +1,7 @@
 from sqlalchemy import desc
 from sqlalchemy.sql import func
 
-from db import db_session
+from db_2.db import db_session
 from model_2 import Salary
 
 def top_salary(num_rows):

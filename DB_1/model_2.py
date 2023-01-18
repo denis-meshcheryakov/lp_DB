@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Date
 
-from db import Base, engine
+from db_2.db import Base, engine
 
 
 class Salary(Base):
