@@ -1,6 +1,8 @@
 import csv
 from datetime import datetime
 
+from sqlalchemy.exc import SQLAlchemyError
+
 from db import db_session
 from models import Company, Project, ProjectEmployee
 
@@ -20,7 +22,11 @@ def get_or_create_project(project_name, company_id):
     if not project:
         project = Project(name=project_name, company_id=company_id)
         db_session.add(project)
-        db_session.commit()
+        try:
+            db_session.commit()
+        except SQLAlchemyError:
+            db_session.rollback()
+            raise
     return project
 
 
@@ -32,7 +38,11 @@ def create_project_employee(row, project):
         date_end=row['date_end']
     )
     db_session.add(project_employee)
-    db_session.commit()
+    try:
+        db_session.commit()
+    except SQLAlchemyError:
+        db_session.rollback()
+        raise
 
 
 def process_row(row):
@@ -41,13 +51,24 @@ def process_row(row):
     create_project_employee(row, project)
 
 
+def print_error(row_num, error_text, exception):
+    print(f'Ошибка на строке {row_num}')
+    print(error_text.format(exception))
+    print('_' * 100)
+
+
 def read_csv(filename):
     with open(filename, 'r', encoding='utf-8') as f:
         fields = ['project_name',  'company_id', 'employee_id', 'date_start', 'date_end']
         reader = csv.DictReader(f, fields, delimiter=';')
-        for row in reader:
-            process_row(row)
+        for row_num, row in enumerate(reader, start=1):
+            try:
+                process_row(row)
+            except (TypeError, ValueError) as e:
+                print_error(row_num, 'Не правильный формат данных {}', e)
+            except SQLAlchemyError as e:
+                print_error(row_num, 'Ошибка целостности данных {}', e)
 
 
 if __name__ == "__main__":
-    read_csv()
+    read_csv('projects.csv')
