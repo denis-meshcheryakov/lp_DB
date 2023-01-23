@@ -11,7 +11,7 @@ class Company(Base):
     city = Column(String)
     address = Column(String)
     phone = Column(String)
-    year_founded = Column(String)
+    year_founded = Column(Integer)
     employees = relationship("Employee", lazy='joined')
 
     def __repr__(self):
