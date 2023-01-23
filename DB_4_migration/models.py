@@ -24,11 +24,11 @@ class Employee(Base):
     id = Column(Integer, primary_key=True)
     company_id = Column(Integer, ForeignKey(Company.id), index=True, nullable=False)
     name = Column(String)
-    job = Column(String)
+    job = Column(String, index=True)
     phone = Column(String)
     email = Column(String)
     date_of_birth = Column(Date)
-    company = relationship("Company")
+    company = relationship("Company", lazy='joined')
     payments = relationship("Payment")
 
     def __repr__(self):
