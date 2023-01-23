@@ -42,6 +42,7 @@ class Payment(Base):
     employee_id = Column(Integer, ForeignKey(Employee.id), index=True, nullable=False)
     payment_date = Column(Date)
     ammount = Column(Integer)
+    currency = Column(String, nullable=False)
     employee = relationship("Employee")
 
     def __repr__(self):
